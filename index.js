@@ -22,7 +22,15 @@ const renderHelper = (tasks, options, level) => {
 				let data = task.output;
 
 				if (typeof data === 'string') {
-					data = stripAnsi(data.trim().split('\n').filter(Boolean).pop());
+          data = data
+            .trim()
+            .split('\n')
+            .filter(Boolean)
+            .map((value, index) => index > 0
+                ? indentString(`    ${value}`, level, '  ')
+                : chalk.gray(stripAnsi(value))
+            )
+            .join('\n');
 
 					if (data === '') {
 						data = undefined;
@@ -31,7 +39,7 @@ const renderHelper = (tasks, options, level) => {
 
 				if (utils.isDefined(data)) {
 					const out = indentString(`${figures.arrowRight} ${data}`, level, '  ');
-					output.push(`   ${chalk.gray(cliTruncate(out, process.stdout.columns - 3))}`);
+					output.push(`   ${cliTruncate(out, process.stdout.columns - 3)}`);
 				}
 			}
 
